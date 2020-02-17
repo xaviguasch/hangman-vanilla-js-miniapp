@@ -45,9 +45,29 @@ function showNotification() {
 }
 
 // Updates the wrong letters element
-function updateWrongLettersEl(letter) {
-  console.log(letter)
-  console.log('update wrong')
+function updateWrongLettersEl() {
+  // display wrong letters
+  wrongLettersEl.innerHTML = `
+    ${wrongLetters.length > 0 ? '<p>Wrong</p>' : ''}
+    ${wrongLetters.map(letter => `<span>${letter}</span>`)}
+  `
+
+  // display parts
+  figureParts.forEach((part, index) => {
+    const errors = wrongLetters.length
+
+    if (index < errors) {
+      part.style.display = 'block'
+    } else {
+      part.style.display = 'none'
+    }
+  })
+
+  // display if lost
+  if (wrongLetters.length >= figureParts.length) {
+    finalMessage.innerHTML = 'Unfortunately you lost. 😞'
+    popup.style.display = 'flex'
+  }
 }
 
 // Keydown letter press
@@ -66,12 +86,25 @@ window.addEventListener('keydown', e => {
       if (!wrongLetters.includes(letter)) {
         wrongLetters.push(letter)
 
-        updateWrongLettersEl(letter)
+        updateWrongLettersEl()
       } else {
         showNotification()
       }
     }
   }
+})
+
+// Restart game and play again
+playAgainBtn.addEventListener('click', () => {
+  // Empty arrays
+  correctLetters.splice(0)
+  wrongLetters.splice(0)
+
+  selectedWord = words[Math.floor(Math.random() * words.length)]
+
+  displayWord()
+  updateWrongLettersEl()
+  popup.style.display = 'none'
 })
 
 displayWord()
